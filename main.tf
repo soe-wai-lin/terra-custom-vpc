@@ -96,3 +96,15 @@ resource "aws_route_table_association" "terr_rt_asso_b" {
   subnet_id      = aws_subnet.terra_vpc_pub_02.id
   route_table_id = aws_route_table.terra_pub_rt.id
 }
+
+# data "terraform_remote_state" "db" {
+#   backend = "s3"
+
+#   config = {
+#     bucket = "swlbacket-state-store"
+#     key = "vpc/terraform.tfstate"
+#     region = "ap-southeast-1"
+#     use_lockfile = "true"
+#   }
+# }
+

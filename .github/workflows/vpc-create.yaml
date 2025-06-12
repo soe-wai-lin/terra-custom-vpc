@@ -1,0 +1,62 @@
+# Name of the workflow as it appears in the GitHub Actions UI
+name: Terraform AWS Deployment (Access Key Auth)
+
+# Define when the workflow should run
+on:
+  push:
+    # Trigger the workflow on pushes to the 'main' branch
+    branches:
+      - dev
+  workflow_dispatch:
+  
+
+permissions:
+  contents: read
+
+# Define the jobs that make up this workflow
+jobs:
+  # Define a job named 'terraform_deploy'
+  terraform_deploy:
+    # Specify the runner environment for this job
+    runs-on: ubuntu-latest
+
+    # Define the steps for this job
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout Repository
+        uses: actions/checkout@v4 # Uses the action to checkout your repository's code
+
+      # Step 2: Configure AWS credentials using the provided secrets
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          # aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          # aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1 # Change this to your desired AWS regio
+          role-to-assume: arn:aws:iam::851725184910:role/github-action
+
+      # Step 3: Set up Terraform CLI
+      - name: Setup Terraform CLI
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0 # You can specify a different version if needed
+
+      # Step 4: Initialize Terraform
+      - name: Terraform Init
+        run: terraform init
+
+      # Step 5: Format Terraform files
+      # - name: Terraform Fmt
+      #   run: terraform fmt -check
+
+      # Step 6: Validate Terraform configuration
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Step 7: Generate a Terraform plan
+      - name: Terraform Plan
+        run: terraform plan 
+
+      # Step 8: Apply Terraform changes
+      - name: Terraform Apply
+        run: terraform apply -auto-approve 

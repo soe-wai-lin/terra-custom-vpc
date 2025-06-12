@@ -3,11 +3,11 @@ name: Terraform AWS Deployment (Access Key Auth)
 
 # Define when the workflow should run
 on:
-#   push:
-#     # Trigger the workflow on pushes to the 'main' branch
-#     branches:
-#       - dev
-  workflow_dispatch: 
+  push:
+    # Trigger the workflow on pushes to the 'main' branch
+    branches:
+      - dev
+#   workflow_dispatch: 
       
       
   
@@ -60,10 +60,10 @@ jobs:
       - name: Terraform Plan
         run: terraform plan 
 
-      # Step 8: Apply Terraform changes
-      - name: Terraform Apply
-        run: terraform apply -auto-approve 
+    #   # Step 8: Apply Terraform changes
+    #   - name: Terraform Apply
+    #     run: terraform apply -auto-approve 
 
       # Step 8: Destroy Terraform changes
-      - name: Terraform Apply
+      - name: Terraform destroy
         run: terraform destroy -auto-approve 

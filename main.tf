@@ -10,6 +10,7 @@ resource "aws_subnet" "terra_vpc_pub_01" {
   vpc_id     = aws_vpc.terra_vpc.id
   cidr_block = var.pub_sub_01
   availability_zone = "ap-southeast-1a"
+  map_public_ip_on_launch = true
 
   tags = {
     Name = "pub-sub-1"
@@ -20,6 +21,7 @@ resource "aws_subnet" "terra_vpc_pub_02" {
   vpc_id     = aws_vpc.terra_vpc.id
   cidr_block = var.pub_sub_02
   availability_zone = "ap-southeast-1b"
+  map_public_ip_on_launch = true
 
   tags = {
     Name = "pub-sub-2"

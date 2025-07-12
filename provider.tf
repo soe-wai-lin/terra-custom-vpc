@@ -5,6 +5,7 @@ terraform {
       version = "6.0.0-beta3"
     }
   }
+}
 #  backend "s3" {
 #    bucket = "swlbucket01"
 #    key    = "vpc/terraform"
@@ -14,7 +15,7 @@ terraform {
 #    # }
 #    # use_lockfile = true
 #  }
-}
+
 
 provider "aws" {
   region  = var.aws_region

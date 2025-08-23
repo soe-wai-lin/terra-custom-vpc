@@ -5,8 +5,8 @@ name: Terraform AWS Deployment (Access Key Auth)
 on:
   push:
     # Trigger the workflow on pushes to the 'main' branch
-    branches:
-      - dev
+    # branches:
+    #   - dev
 #   workflow_dispatch: 
       
       

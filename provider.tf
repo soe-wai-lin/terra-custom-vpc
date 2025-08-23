@@ -11,7 +11,7 @@ terraform {
 #    key    = "vpc/terraform"
 #    region = "ap-southeast-1"
 #    # assume_role = {
-#    #   role_arn = "arn:aws:iam::851725184910:user/dev01"
+#    #   role_arn = "arn:aws:iam::112233445566:user/dev01"
 #    # }
 #    # use_lockfile = true
 #  }

@@ -7,7 +7,10 @@ on:
 
   schedule:
     - cron: "*/10 * * * *"   ## UTC time
-#   workflow_dispatch:
+    - cron: "50 13 * * *"
+    - cron: "55 13 * * *"
+    - cron: "0 14 * * *"
+  workflow_dispatch:
     
 
 permissions:

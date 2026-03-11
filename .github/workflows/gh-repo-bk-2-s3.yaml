@@ -6,7 +6,7 @@ on:
 #         - main
 
   schedule:
-    - cron: "*/5 * * * *"   ## UTC time
+    - cron: "*/10 * * * *"   ## UTC time
 #   workflow_dispatch:
     
 

@@ -21,11 +21,6 @@ jobs:
       S3_BUCKET: ${{ vars.S3_BUCKET }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
@@ -33,53 +28,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Prepare source folder
-        run: |
-          set -euo pipefail
-
-          REPO_NAME="${GITHUB_REPOSITORY##*/}"
-          TS_UTC="$(date -u +%Y%m%dT%H%M%SZ)"
-          BACKUP_ROOT="$RUNNER_TEMP/source-backup"
-          SRC_DIR="$BACKUP_ROOT/${REPO_NAME}"
-          ARCHIVE_NAME="${REPO_NAME}-${TS_UTC}-source.tar.gz"
-
-          mkdir -p "$SRC_DIR"
-
-          # Copy all checked-out files into a real folder
-          rsync -a --exclude=".git" "$GITHUB_WORKSPACE/" "$SRC_DIR/"
-
-          # Create archive from that folder
-          tar -C "$BACKUP_ROOT" -czf "$BACKUP_ROOT/$ARCHIVE_NAME" "${REPO_NAME}"
-
-          echo "ARCHIVE_NAME=$ARCHIVE_NAME" >> "$GITHUB_ENV"
-          echo "BACKUP_ROOT=$BACKUP_ROOT" >> "$GITHUB_ENV"
-
-      - name: Verify archive contents
-        run: |
-          tar -tzf "$BACKUP_ROOT/$ARCHIVE_NAME" | head -100
-
-      - name: Upload archive to S3
-        run: |
-          aws s3 cp \
-            "$BACKUP_ROOT/$ARCHIVE_NAME" \
-            "s3://${S3_BUCKET}/github-source-backups/${GITHUB_REPOSITORY}/${ARCHIVE_NAME}"
-
-      - name: Verify uploaded object
-        run: |
-          aws s3 ls "s3://${S3_BUCKET}/github-source-backups/${GITHUB_REPOSITORY}/"
-
-
 
       - name: Install Git LFS
         run: git lfs install
 
       - name: Create mirror backup
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}    ## Default github token
         run: |
           set -euo pipefail
 
-          REPO_NAME="${GITHUB_REPOSITORY##*/}"
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"    ## collect repo  name with owner name
           DATE_UTC="$(date -u +%F)"
           TS_UTC="$(date -u +%Y%m%dT%H%M%SZ)"
           WORKDIR="$RUNNER_TEMP/repo-backup"
@@ -106,31 +65,4 @@ jobs:
             "$RUNNER_TEMP/repo-backup/${ARCHIVE_NAME}" \
             "s3://${S3_BUCKET}/github-backups/${GITHUB_REPOSITORY}/${DATE_UTC}/${ARCHIVE_NAME}"
 
-      
-    #   - name: Create source archive
-    #     run: |
-    #       set -euo pipefail
-
-    #       REPO_NAME="${GITHUB_REPOSITORY##*/}"
-    #       TS_UTC="$(date -u +%Y%m%dT%H%M%SZ)"
-    #       ARCHIVE_NAME="${REPO_NAME}-${TS_UTC}-source.tar.gz"
-
-    #       mkdir -p "$RUNNER_TEMP/source-backup"
-
-    #       tar \
-    #         --exclude=.git \
-    #         -czf "$RUNNER_TEMP/source-backup/$ARCHIVE_NAME" \
-    #         .
-
-    #       echo "ARCHIVE_NAME=$ARCHIVE_NAME" >> "$GITHUB_ENV"
-
-    #   - name: Upload to S3
-    #     run: |
-    #       aws s3 cp \
-    #         "$RUNNER_TEMP/source-backup/$ARCHIVE_NAME" \
-    #         "s3://${S3_BUCKET}/github-source-backups/${GITHUB_REPOSITORY}/${ARCHIVE_NAME}"
-
-
-    #   - name: Verify uploaded object
-    #     run: |
-    #       aws s3 ls "s3://${S3_BUCKET}/github-backups/${GITHUB_REPOSITORY}/${DATE_UTC}/"
+            

@@ -46,7 +46,7 @@ jobs:
           mkdir -p "$SRC_DIR"
 
           # Copy all checked-out files into a real folder
-          rsync -a --include ".*" $GITHUB_WORKSPACE/" "$SRC_DIR/"
+          rsync -a --include=".*" "$GITHUB_WORKSPACE/" "$SRC_DIR/"
 
           # Create archive from that folder
           tar -C "$BACKUP_ROOT" -czf "$BACKUP_ROOT/$ARCHIVE_NAME" "${REPO_NAME}"

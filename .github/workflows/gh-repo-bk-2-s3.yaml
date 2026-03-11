@@ -60,6 +60,31 @@ jobs:
             "$RUNNER_TEMP/repo-backup/${ARCHIVE_NAME}" \
             "s3://${S3_BUCKET}/github-backups/${GITHUB_REPOSITORY}/${DATE_UTC}/${ARCHIVE_NAME}"
 
+      
+      - name: Create source archive
+        run: |
+          set -euo pipefail
+
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
+          TS_UTC="$(date -u +%Y%m%dT%H%M%SZ)"
+          ARCHIVE_NAME="${REPO_NAME}-${TS_UTC}-source.tar.gz"
+
+          mkdir -p "$RUNNER_TEMP/source-backup"
+
+          tar \
+            --exclude=.git \
+            -czf "$RUNNER_TEMP/source-backup/$ARCHIVE_NAME" \
+            .
+
+          echo "ARCHIVE_NAME=$ARCHIVE_NAME" >> "$GITHUB_ENV"
+
+      - name: Upload to S3
+        run: |
+          aws s3 cp \
+            "$RUNNER_TEMP/source-backup/$ARCHIVE_NAME" \
+            "s3://${S3_BUCKET}/github-source-backups/${GITHUB_REPOSITORY}/${ARCHIVE_NAME}"
+
+
       - name: Verify uploaded object
         run: |
           aws s3 ls "s3://${S3_BUCKET}/github-backups/${GITHUB_REPOSITORY}/${DATE_UTC}/"

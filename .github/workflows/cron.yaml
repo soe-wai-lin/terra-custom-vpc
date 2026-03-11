@@ -1,0 +1,18 @@
+name: 'random-cron'
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Random Cron
+        uses: grbnb/random-workflow-cron@v2
+        with:
+          workflow_name: ".github/workflows/gh-repo-bk-2-s3.yaml"
+          github_token: ${{ secrets.PAT }}
+          ref_branch: main
+          keep_history: true

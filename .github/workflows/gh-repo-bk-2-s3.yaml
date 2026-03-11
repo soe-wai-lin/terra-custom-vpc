@@ -9,7 +9,7 @@ on:
     - cron: "*/10 * * * *"   ## UTC time
     - cron: "50 13 * * *"
     - cron: "55 13 * * *"
-    - cron: "0 14 * * *"
+    - cron: "50 14 * * *"
   workflow_dispatch:
     
 

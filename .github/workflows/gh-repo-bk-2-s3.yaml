@@ -46,7 +46,7 @@ jobs:
           mkdir -p "$SRC_DIR"
 
           # Copy all checked-out files into a real folder
-          rsync -a --include=".*" "$GITHUB_WORKSPACE/" "$SRC_DIR/"
+          rsync -a --exclude=".git" "$GITHUB_WORKSPACE/" "$SRC_DIR/"
 
           # Create archive from that folder
           tar -C "$BACKUP_ROOT" -czf "$BACKUP_ROOT/$ARCHIVE_NAME" "${REPO_NAME}"
@@ -70,41 +70,41 @@ jobs:
 
 
 
-    #   - name: Install Git LFS
-    #     run: git lfs install
+      - name: Install Git LFS
+        run: git lfs install
 
-    #   - name: Create mirror backup
-    #     env:
-    #       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     run: |
-    #       set -euo pipefail
+      - name: Create mirror backup
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
 
-    #       REPO_NAME="${GITHUB_REPOSITORY##*/}"
-    #       DATE_UTC="$(date -u +%F)"
-    #       TS_UTC="$(date -u +%Y%m%dT%H%M%SZ)"
-    #       WORKDIR="$RUNNER_TEMP/repo-backup"
-    #       mkdir -p "$WORKDIR"
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
+          DATE_UTC="$(date -u +%F)"
+          TS_UTC="$(date -u +%Y%m%dT%H%M%SZ)"
+          WORKDIR="$RUNNER_TEMP/repo-backup"
+          mkdir -p "$WORKDIR"
 
-    #       cd "$WORKDIR"
+          cd "$WORKDIR"
 
-    #       echo "Cloning mirror of ${GITHUB_REPOSITORY}"
-    #       git clone --mirror "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "${REPO_NAME}.git"
+          echo "Cloning mirror of ${GITHUB_REPOSITORY}"
+          git clone --mirror "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "${REPO_NAME}.git"
 
-    #       # Best effort for Git LFS
-    #       git -C "${REPO_NAME}.git" lfs fetch --all || true
+          # Best effort for Git LFS
+          git -C "${REPO_NAME}.git" lfs fetch --all || true
 
-    #       ARCHIVE_NAME="${REPO_NAME}-${TS_UTC}.git.tar.gz"
-    #       tar -czf "$ARCHIVE_NAME" "${REPO_NAME}.git"
+          ARCHIVE_NAME="${REPO_NAME}-${TS_UTC}.git.tar.gz"
+          tar -czf "$ARCHIVE_NAME" "${REPO_NAME}.git"
 
-    #       echo "ARCHIVE_NAME=$ARCHIVE_NAME" >> "$GITHUB_ENV"
-    #       echo "DATE_UTC=$DATE_UTC" >> "$GITHUB_ENV"
-    #       echo "REPO_NAME=$REPO_NAME" >> "$GITHUB_ENV"
+          echo "ARCHIVE_NAME=$ARCHIVE_NAME" >> "$GITHUB_ENV"
+          echo "DATE_UTC=$DATE_UTC" >> "$GITHUB_ENV"
+          echo "REPO_NAME=$REPO_NAME" >> "$GITHUB_ENV"
 
-    #   - name: Upload archive to S3
-    #     run: |
-    #       aws s3 cp \
-    #         "$RUNNER_TEMP/repo-backup/${ARCHIVE_NAME}" \
-    #         "s3://${S3_BUCKET}/github-backups/${GITHUB_REPOSITORY}/${DATE_UTC}/${ARCHIVE_NAME}"
+      - name: Upload archive to S3
+        run: |
+          aws s3 cp \
+            "$RUNNER_TEMP/repo-backup/${ARCHIVE_NAME}" \
+            "s3://${S3_BUCKET}/github-backups/${GITHUB_REPOSITORY}/${DATE_UTC}/${ARCHIVE_NAME}"
 
       
     #   - name: Create source archive

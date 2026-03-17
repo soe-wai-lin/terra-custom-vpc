@@ -5,9 +5,9 @@ on:
 #     branches:
 #         - main
 
-  schedule:
-    - cron: "0 */1 * * *"   ## UTC time
-  workflow_dispatch:
+  # schedule:
+  #   - cron: "0 */1 * * *"   ## UTC time
+  # workflow_dispatch:
     
 
 permissions:
